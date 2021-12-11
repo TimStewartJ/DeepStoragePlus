@@ -83,6 +83,8 @@ public class LanguageManager {
         translateMap.put("toofar", main.getConfig().getString("toofar"));
         translateMap.put("givecommand", main.getConfig().getString("givecommand"));
         translateMap.put("emptysorterblock", main.getConfig().getString("emptysorterblock"));
+        translateMap.put("tocreateaccessor", main.getConfig().getString("tocreateaccessor"));
+        translateMap.put("accessorloader", main.getConfig().getString("accessorloader"));
     }
 
     public static String getValue(String key) {

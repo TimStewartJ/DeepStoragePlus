@@ -32,6 +32,7 @@ public class ItemList {
     public ItemStack creativeStorageContainer;
     public ItemStack storageWrench;
     public ItemStack sorterWrench;
+    public ItemStack accessorWrench;
     public ItemStack receiver;
     public ItemStack terminal;
     public ItemStack speedUpgrade;
@@ -79,6 +80,7 @@ public class ItemList {
 
         this.storageWrench = createStorageWrench();
         this.sorterWrench = createSorterWrench();
+        this.accessorWrench = createAccessorWrench();
         this.linkModule = createLinkModule();
         this.receiver = createReceiver();
         this.terminal = createTerminal();
@@ -99,6 +101,7 @@ public class ItemList {
         itemListMap.put("creative_storage_container", creativeStorageContainer);
         itemListMap.put("storage_wrench", storageWrench);
         itemListMap.put("sorter_wrench", sorterWrench);
+        itemListMap.put("accessor_wrench", accessorWrench);
         itemListMap.put("receiver", receiver);
         itemListMap.put("terminal", terminal);
         itemListMap.put("speed_upgrade", speedUpgrade);
@@ -169,11 +172,26 @@ public class ItemList {
         ItemStack sorterWrench = createStorageWrench();
         sorterWrench.setDurability((short)105);
         ItemMeta wrenchmeta = sorterWrench.getItemMeta();
+        wrenchmeta.setLore(Arrays.asList(ChatColor.GRAY + LanguageManager.getValue("clickempty"),
+                ChatColor.GRAY + LanguageManager.getValue("tocreatesorter"), "", ChatColor.GRAY + LanguageManager.getValue("onetimeuse")));
         wrenchmeta.setDisplayName(ChatColor.AQUA.toString() + LanguageManager.getValue("sorterloader"));
         sorterWrench.setItemMeta(wrenchmeta);
 
         return sorterWrench;
     }
+
+    public static ItemStack createAccessorWrench() {
+        ItemStack accessorWrench = createStorageWrench();
+        accessorWrench.setDurability((short)105);
+        ItemMeta wrenchmeta = accessorWrench.getItemMeta();
+        wrenchmeta.setLore(Arrays.asList(ChatColor.GRAY + LanguageManager.getValue("clickempty"),
+                ChatColor.GRAY + LanguageManager.getValue("tocreateaccessor"), "", ChatColor.GRAY + LanguageManager.getValue("onetimeuse")));
+        wrenchmeta.setDisplayName(ChatColor.AQUA.toString() + LanguageManager.getValue("accessorloader"));
+        accessorWrench.setItemMeta(wrenchmeta);
+
+        return accessorWrench;
+    }
+
 
     public static ItemStack createLinkModule() {
         ItemStack linkModule = createStorageCell(99, ChatColor.AQUA.toString() + LanguageManager.getValue("linkmodule"));

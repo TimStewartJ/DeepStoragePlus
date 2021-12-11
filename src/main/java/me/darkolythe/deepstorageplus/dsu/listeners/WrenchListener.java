@@ -34,11 +34,12 @@ public class WrenchListener implements Listener {
             Player player = event.getPlayer();
             ItemStack storageWrench = ItemList.createStorageWrench();
             ItemStack sorterWrench = ItemList.createSorterWrench();
+            ItemStack accessorWrench = ItemList.createAccessorWrench();
             ItemStack linkModule = ItemList.createLinkModule();
 
             Block block = event.getClickedBlock();
             if (player.getInventory().getItemInMainHand().equals(storageWrench)
-                    || player.getInventory().getItemInMainHand().equals(sorterWrench)) {
+                    || player.getInventory().getItemInMainHand().equals(sorterWrench) || player.getInventory().getItemInMainHand().equals(accessorWrench)) {
                 if (block != null && block.getType() == Material.CHEST) {
                     if (player.hasPermission("deepstorageplus.create")) {
                         if (!event.isCancelled()) {
@@ -46,11 +47,15 @@ public class WrenchListener implements Listener {
                             if (isInventoryEmpty(block)) {
                                 if (sizeOfInventory(block) == 54) {
                                     if (player.getInventory().getItemInMainHand().equals(storageWrench)) {
-                                        createDSU(block);
+                                        createUnit(block, "DSU");
                                         player.getInventory().getItemInMainHand().setAmount(0);
                                         player.sendMessage(DeepStoragePlus.prefix + ChatColor.GREEN + LanguageManager.getValue("dsucreate"));
                                     } else if (player.getInventory().getItemInMainHand().equals(sorterWrench)) {
-                                        createSorter(block);
+                                        createUnit(block, "sorter");
+                                        player.getInventory().getItemInMainHand().setAmount(0);
+                                        player.sendMessage(DeepStoragePlus.prefix + ChatColor.GREEN + LanguageManager.getValue("sortercreate"));
+                                    } else if (player.getInventory().getItemInMainHand().equals(accessorWrench)) {
+                                        createUnit(block, "accessor");
                                         player.getInventory().getItemInMainHand().setAmount(0);
                                         player.sendMessage(DeepStoragePlus.prefix + ChatColor.GREEN + LanguageManager.getValue("sortercreate"));
                                     }
@@ -74,7 +79,7 @@ public class WrenchListener implements Listener {
                 if (block != null && block.getType() == Material.CHEST) {
                     if (!event.isCancelled()) {
                         event.setCancelled(true);
-                        if (isDSU(block) || isSorter(block)) {
+                        if (isUnit(block)) {
                             ItemMeta linkModuleMeta = player.getInventory().getItemInMainHand().getItemMeta();
                             linkModuleMeta.setLore(Arrays.asList(ChatColor.BLUE + String.format("%s %s %s %s", block.getWorld().getName(), block.getX(), block.getY(), block.getZ())));
                             player.getInventory().getItemInMainHand().setItemMeta(linkModuleMeta);
@@ -105,40 +110,40 @@ public class WrenchListener implements Listener {
         return inv.getSize();
     }
 
-    private void createDSU(Block block) {
+    private void createUnit(Block block, String type) {
+        String name = "";
+        switch(type) {
+            case "DSU":
+                name = DeepStoragePlus.DSUname;
+                break;
+            case "sorter":
+                name = DeepStoragePlus.sortername;
+                break;
+            case "accessor":
+                name = DeepStoragePlus.accessorname;
+                break;
+            default:
+                break;
+        }
         Chest chest = (Chest) block.getState();
-        chest.setCustomName(DeepStoragePlus.DSUname);
+        chest.setCustomName(name);
         chest.update();
     }
 
-    private boolean isDSU(Block block) {
+    private boolean isUnit(Block block) {
+        return isUnit(block, DeepStoragePlus.DSUname) || isUnit(block, DeepStoragePlus.accessorname) || isUnit(block, DeepStoragePlus.sortername);
+    }
+
+    private boolean isUnit(Block block, String type) {
         Chest chest = (Chest) block.getState();
         if (chest.getInventory().getHolder() instanceof DoubleChest) {
             DoubleChest doubleChest = (DoubleChest) chest.getInventory().getHolder();
             Chest leftChest = (Chest) doubleChest.getLeftSide();
             Chest rightChest = (Chest) doubleChest.getRightSide();
-            return (leftChest.getCustomName() != null && leftChest.getCustomName().equals(DeepStoragePlus.DSUname)) ||
-                    (rightChest.getCustomName() != null && rightChest.getCustomName().equals(DeepStoragePlus.DSUname));
+            return (leftChest.getCustomName() != null && leftChest.getCustomName().equals(type)) ||
+                    (rightChest.getCustomName() != null && rightChest.getCustomName().equals(type));
         }
-        return chest.getCustomName() != null && chest.getCustomName().equals(DeepStoragePlus.DSUname);
-    }
-
-    private void createSorter(Block block) {
-        Chest chest = (Chest) block.getState();
-        chest.setCustomName(DeepStoragePlus.sortername);
-        chest.update();
-    }
-
-    private boolean isSorter(Block block) {
-        Chest chest = (Chest) block.getState();
-        if (chest.getInventory().getHolder() instanceof DoubleChest) {
-            DoubleChest doubleChest = (DoubleChest) chest.getInventory().getHolder();
-            Chest leftChest = (Chest) doubleChest.getLeftSide();
-            Chest rightChest = (Chest) doubleChest.getRightSide();
-            return (leftChest.getCustomName() != null && leftChest.getCustomName().equals(DeepStoragePlus.sortername)) ||
-                    (rightChest.getCustomName() != null && rightChest.getCustomName().equals(DeepStoragePlus.sortername));
-        }
-        return chest.getCustomName() != null && chest.getCustomName().equals(DeepStoragePlus.sortername);
+        return chest.getCustomName() != null && chest.getCustomName().equals(type);
     }
 
     private static Inventory getInventoryFromBlock(Block block) {
